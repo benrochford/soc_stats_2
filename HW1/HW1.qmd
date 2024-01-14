@@ -1,0 +1,96 @@
+---
+title: "HW1"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+## 1.1
+
+Estimand
+
+OLS
+
+Unit-specific quantity
+
+Potential outcomes
+
+Effect heterogeneity
+
+### Setup (1.2)
+
+```{r}
+library(tidyverse)
+library(gt)
+
+d <- data.frame(
+  T = c(0, 0, 1, 0, 0, 1, 1, 1),
+  Y0 = c(5, 8, 5, 12, 4, 8, 4, 9),
+  Y1 = c(5, 10, 3, 13, 2, 9, 1, 13), 
+  id = LETTERS[1:8]
+)
+
+gt(d, rowname_col = "id") # gt is used for fancy printing of tables
+```
+
+## 1.3
+
+Add outcomes and calculate the Average Treatment Effect
+
+$Y = TY^1 + (1-T)Y^0$
+
+```{r}
+d <- d |> 
+  mutate(Y = T * Y1 + (1 - T) * Y0)
+
+gt(d, rowname_col = "id")
+```
+
+Now the ATE
+
+```{r}
+mean(d$Y[d$T == 1]) - mean(d$Y[d$T == 0])
+```
+
+## 1.4
+
+re sample T 3 times and run
+
+```{r}
+d <- d |> 
+  mutate(T = sample(d$T)) |> 
+  mutate(Y = T * Y1 + (1 - T) * Y0)
+
+gt(d, rowname_col = "id")
+mean(d$Y[d$T == 1]) - mean(d$Y[d$T == 0])
+
+
+d <- d |> 
+  mutate(T = sample(d$T)) |> 
+  mutate(Y = T * Y1 + (1 - T) * Y0)
+
+gt(d, rowname_col = "id")
+mean(d$Y[d$T == 1]) - mean(d$Y[d$T == 0])
+
+
+d <- d |> 
+  mutate(T = sample(d$T)) |> 
+  mutate(Y = T * Y1 + (1 - T) * Y0)
+
+gt(d, rowname_col = "id")
+mean(d$Y[d$T == 1]) - mean(d$Y[d$T == 0])
+```
+
+The estimates are generally not very close to the "real" ATE
+
+## 1.5
+
+Find the needed sample size for statistical power
+
+We know our ATE is .125, and we will assume reasonable values for other parameters
+
+```{r}
+power.t.test(delta=0.125, sd=1, sig.level=0.05, power=0.80, type="two.sample", alternative="two.sided")
+```
+
+Looks like the sample size needs to be a little over a thousand here, to have a statistical power of .8
