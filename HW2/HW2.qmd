@@ -1,0 +1,76 @@
+---
+title: "HW2"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+## 2.1
+
+Which of the following is the best definition of the term *identified* as in “this variation has identified the effect we’re interested in”?
+
+a.  We’ve generated the data by conducting a controlled experiment in which treatment is randomly assigned.
+
+b.  In the data generating process, the only reason why we see variation in the outcome variable is because of the treatment variable.
+
+c.  The relationship we are looking at in the data actually tests a hypothesis.
+
+d.  **In the variation we use, there’s no reason we’d see any relationship at all except for the effect we’re interested in**. (this one)
+
+## 2.2
+
+You read about a new study with the headline “eating caviar linked to longer lifespan.” The study’s research question is “does eating caviar make you live longer?” In the study’s data, they find that people who eat caviar have, on average, longer lifespans than people who don’t.
+
+a.  What are some alternate explanations for this relationship?
+
+    Maybe people who eat caviar are wealthier, and therefore have better medical care, better diets, healthier lifestyles, or safer jobs
+
+b.  What sort of variation would identify the answer to the research question?
+
+    A positive relationship between lifespan and controlled caviar consumption for a random representative sample of the population being referred to
+
+c.  Give one suggestion for how the study authors might isolate variation that would identify the answer to the research question
+
+    Use a random sample to control for income, geography, and other possible confounders
+
+## 2.3
+
+For each of the following news headlines, assume that the underlying data actually only shows a correlation between the two variables mentioned. Give an alternate explanation for the correlation other than the causal relationship implied by the headline.
+
+a.  “As stock market drops, presidential approval ratings decline.”
+
+    When the stock market is "dropping," maybe economic conditions are worsening more generally, so perhaps more people are losing their jobs, which is making them upset about the country's leadership and there lowering presidential approval ratings
+
+b.  “Dates are announced for the downtown summer concert series, driving up sales at downtown restaurants.”
+
+    Maybe the sales at downtown restaurants just go up every summer anyway because more people travel to visit the city when their kids are out of school or something
+
+c.  “Unsanitary? Hospital visits linked to 20% increased risk of disease.”
+
+    Maybe the people who tend to visit the hospital have other medical issues which make them prone to infection in general
+
+d.  “Dress for success! Every CEO follows this office-wear rule.”
+
+    The CEOs might dress a certain way as a result of standards for professionalism in their work environment, or their company's particular culture and expectations. Who knows how they dressed before they became a CEO. Babies don't wear anything. Well. At least at the beginning. And then intermittently afterward. All I'm saying is that everyone has to have been a baby. Citation needed.
+
+## 2.4
+
+Why is a variable that causes both the “treatment” and “outcome” variables especially concerning for identification? You may want to use the phrase “alternate explanation” in your answer.
+
+This variable presents an alternate explanation for the observed effect, suggesting that the relationship between the treatment and outcome may not be causal (perhaps even at all) but rather explained by this third factor.
+
+## 2.5
+
+Shoe company Crikey claims that people who wear their fancy and expensive professional running-shoe Cool Mistrunner brand run 4 to 5% faster than if they wore an average shoe.
+
+a.  In a few sentences, describe the data-generating process (you will probably leave some things out, that’s okay).
+
+    Crikey stipulates that people who wear their shoe run faster because they are wearing those particular shoes. Also worth considering in the DGP are other factors which might make these users of the shoe run faster. People who are motivated and practice a lot generally become faster runners. People who are comfortable in their finances and can spend on hobbies may have more time to put into running as a sport. People who are healthier may be faster runners.
+
+b.  What are possible alternative explanations for this claim, aside from the shoe making the person run faster?
+
+    People who consider themselves to be runners may be more motivated to buy a specialized, expensive shoe, so they might be a faster runner regardless of the shoe. Also, people with a decent amount of money might be more capable / willing to buy the shoe because it is an expensive commodity, and since they are wealthier, they might be able to have a better diet, get better medical care, afford personal training, or are socially incentivized to play sports for work. All of these things could make them faster runners, and the shoe is just a signal of their means and interests.
+
+c.  In running their study, the researchers accounted for some alternative explanations, including: gender, enthusiasm for running, and whether runners have participated in marathons and/or half marathons. Think of an alternative explanation not on this list. What is the implication of not accounting for this alternative explanation?
+
+    Wealth, like I mentioned before. People who have enough money to buy the shoe have plenty of other reasons to have more time to put into the hobby and to be healthier in general. The implication of avoiding this is that they are not finding an effect of the shoe on running speed, but the impact of being a valid consumer of their product on running speed.
