@@ -1,0 +1,273 @@
+---
+title: "HW3"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+## 3.1
+
+| Group (T) | E\[Y\^1\] | E\[Y\^0\] |
+|-----------|-----------|-----------|
+| T = 1     | 10000     | 5000      |
+| T = 0     | 10000     | 5000      |
+
+$$
+ATE = \%T*ATT + \%U*ATU \\ $$ $$
+ATE = .3(5000) + .7(5000) \\ $$ $$
+ATE = 5000
+$$
+
+## 3.2
+
+-   Estimand
+
+-   OLS
+
+-   Unit-specific quantity
+
+-   Potential outcomes
+
+-   Effect heterogeneity
+
+-   DAG
+
+-   Paths
+
+-   Direct effects
+
+-   Indirect effects
+
+-   Total effects
+
+-   Front door paths
+
+-   Back door paths
+
+-   Confounding
+
+-   Collider
+
+-   Open Path
+
+-   Closed Path
+
+## 3.3
+
+Draw a causal diagram for the research question “do long shift hours make doctors give lower-quality care?” that incorporates the following features (and only the following features):
+
+a.  Long shift hours affect both how tired doctors are, and how much experience they have, both of which affect the quality of care
+
+b.  How long shifts are is often decided by the hospital the doctor works at. There are plenty of other things about a given hospital that also affect the quality of care, like its funding level, how crowded it is, and so on
+
+c.  New policies that reduce shift times may be implemented at the same time (with the timing determined by some unobservable change in policy preferences) as other policies that also attempt to improve the quality of care
+
+![](images/clipboard-4072689949.png){width="463"}
+
+## 3.4
+
+Consider this research question: Does the funding level of public schools affect student achievement for students in your country?
+
+a.  What is the treatment and what is the outcome of interest?
+
+    > The treatment is the funding level, the outcome of interest is the student achievement
+
+b.  Write down a list of relevant variables.
+
+    > School funding, Student achievement, Regional wealth
+
+c.  Which of the variables in your list in part b are causes of both treatment and outcome?
+
+    > Regional wealth
+
+d.  Why might we want to pay extra attention to the variables listed in part c?
+
+    > It is a confounder, it could explain the whole (apparent) relationship between funding level and student achievement, so we have to be sure to control for it.
+
+e.  Draw a causal diagram of the variables listed in part b.
+
+    ![](images/clipboard-2977403097.png){width="441"}
+
+f.  Simplify the diagram from part e.
+
+    ![](images/clipboard-1865165173.png){width="213"}
+
+## 3.5
+
+How can a causal diagram be modified so as to avoid cyclic relationships?
+
+Consider a cyclical relationship between student achievement and motivation. If students achieve more (i.e., score well on exams), then their motivation goes up, and if their motivation goes up, they achieve more. Change the diagram so that the relationship is not cyclic anymore.
+
+![](images/clipboard-1852927909.png){width="467"}
+
+## 3.6
+
+Assuming that a path has no colliders on it, what is the difference between a path being Open and Closed?
+
+> For a path with no colliders, the path is open if all variables in the path can vary, and it is closed if any variable in the path cannot vary.
+
+## 3.7
+
+a.  List every path from X to Y.
+
+    > XAY, XCDY, XCDBY, XBY
+
+b.  Which of the paths are front-door paths?
+
+    > XAY
+
+c.  Which of the paths are open back-door paths?
+
+    > XCDY, XCDBY, XBY
+
+d.  What variables must be controlled for in order to identify the effect of X on Y? (only list what must be controlled for, not anything that additionally could be controlled for).
+
+    > *"If we can control for at least one variable on each of our Bad Paths without controlling for anything on one of our Good Paths, we have identified the answer to our research question"*
+    >
+    > Control for D and B.
+
+## 3.8
+
+Which of the following describes a causal path where all the arrows point away from the treatment?
+
+a.  Open Path
+
+b.  Closed Path
+
+c.  <div>
+
+    > **Front Door Path**
+
+    </div>
+
+d.  Back Door Path
+
+## 3.9
+
+a.  What type of variable is Popularity in one path on this diagram?
+
+    > It is a collider variable in the path TQ -\> Popularity \<- NOP
+
+b.  Discuss what would happen if you controlled for Popularity.
+
+    > We would open the currently closed path between Teaching Quality and Number of Publications, making it possible to explore the relationship between those two other variables.
+
+## 3.10
+
+|                                      |                                      |                                      |
+|--------------------------------------|--------------------------------------|--------------------------------------|
+| ![](images/clipboard-1641299806.png) | ![](images/clipboard-53180275.png)   | ![](images/clipboard-2136363034.png) |
+| ![](images/clipboard-71728409.png)   | ![](images/clipboard-458758346.png)  | ![](images/clipboard-528184400.png)  |
+| ![](images/clipboard-739357075.png)  | ![](images/clipboard-2622110696.png) | ![](images/clipboard-3636800483.png) |
+
+## 3.11
+
+```{r}
+hod_simulation <- function(
+    N = 1e3,
+    rho = 0.5,
+    Bt = 1,
+    Bx = 1
+) {
+  
+  stopifnot(dplyr::between(rho, -1, 1))
+  stopifnot(N > 0)
+  
+  Mu <- c(s = 1, x = 1)
+  sigmas <- c(s = 1, x = 1)
+  Rho <- rbind(c(1, rho), c(rho, 1))
+  Sigma <- diag(sigmas) %*% Rho %*% diag(sigmas)
+  d <- tibble::as_tibble(mvtnorm::rmvnorm(N, Mu, Sigma))
+  ## approximately 50% of sample gets treatment with this hack
+  d$t <- rbinom(N, 1, pnorm(d$s, Mu[["s"]], sigmas[["s"]]))
+  
+  e <- rnorm(N, 0, 5)
+  
+  d$y0 <- d$x*Bx + e
+  d$y1 <- Bt + d$x*Bx + e
+  d$y <- ifelse(as.logical(d$t), d$y1, d$y0)
+  
+  std_error <- sqrt(2*(5^2 + Bx^2) / (N/2))
+  pwr <- pnorm(std_error*qnorm(0.975), Bt, std_error, lower.tail = FALSE)
+  message("Standard Error ~ ", round(std_error, 3))
+  message("Power ~ ", round(pwr, 3))
+  
+  out <- d[, c("x", "y0", "y1", "t", "y")]
+  
+  structure(out, class = c("simulation", class(out)), pars = list(N = N, Bt = Bt, Bx = Bx, rho = rho))
+  
+}
+```
+
+```{r}
+library(tidyverse)
+set.seed(12345) ## include this so that grading is easier for me.
+d <- hod_simulation(N = 1e3, Bt = 2, Bx = 4, rho = 0.8)
+```
+
+-   Without looking at the results just yet… do you think the naive estimate will be larger or smaller than the “real” estimate (ATE=2)?
+
+    > I think the naive estimate will be larger than the "real" estimate.
+
+-   Check your answer. What are the results given by the naive estimator?
+
+    ```{r}
+    d |> group_by(t) |> summarize(E_y1 = mean(y1), E_y0 = mean(y0))
+    ```
+
+    ```{r}
+    ((4.002211+7.720357)/2) - ((2.002211+5.720357)/2)
+    ```
+
+    > Holy smokes its exactly 2
+
+-   Re-do this but set `rho` to -0.8 (so that S and X are now negatively correlated).
+
+    ```{r}
+    d2 <- hod_simulation(N = 1e3, Bt = 2, Bx = 4, rho = -0.8)
+    d2 |> group_by(t) |> summarize(E_y1 = mean(y1), E_y0 = mean(y0))
+    ```
+
+    ```{r}
+    ((7.831472+4.034304)/2) - ((5.831472+2.034304)/2)
+    ```
+
+    > Wow!
+
+## 3.12
+
+Take the d from the previous question and modify it so that the treatment is now randomized
+
+```{r}
+d_t_messed_up <- d
+d_t_messed_up$t <- sample(d$t)
+d_t_messed_up$y <- if_else(d_t_messed_up$t == 1, d_t_messed_up$y1, d_t_messed_up$y0)
+```
+
+-   Without looking at the results just yet… do you think the naive estimate will be larger or smaller than the “real” estimate (ATE=2)?
+
+    > I'm starting to think its going to be the same.
+
+-   Check your answer. What are the results given by the naive estimator?
+
+    ```{r}
+    d_t_messed_up |> group_by(t) |> summarize(E_y1 = mean(y1), E_y0 = mean(y0))
+    ```
+
+    ```{r}
+    ((5.832070+6.031256)/2) - ((3.832070+4.031256)/2)
+    ```
+
+    > It's still 2.
+
+-   Use `lm()` to predict the newly created `y` from `t`. What are the coefficient values?
+
+    ```{r}
+    lm(y ~ t, d_t_messed_up)
+    ```
+
+-   Use `lm()` to predict the newly created `y` from `t` and `x`. What are the coefficient values?
+
+    ```{r}
+    lm(y ~ t + x, d_t_messed_up)
+    ```
