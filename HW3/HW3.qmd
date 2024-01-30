@@ -20,7 +20,7 @@ $$
 
 ## 3.2
 
--   Estimand
+-   Estimand,
 
 -   OLS
 
@@ -155,7 +155,7 @@ b.  Discuss what would happen if you controlled for Popularity.
 ## 3.10
 
 |                                      |                                      |                                      |
-|--------------------------------------|--------------------------------------|--------------------------------------|
+|------------------------|------------------------|------------------------|
 | ![](images/clipboard-1641299806.png) | ![](images/clipboard-53180275.png)   | ![](images/clipboard-2136363034.png) |
 | ![](images/clipboard-71728409.png)   | ![](images/clipboard-458758346.png)  | ![](images/clipboard-528184400.png)  |
 | ![](images/clipboard-739357075.png)  | ![](images/clipboard-2622110696.png) | ![](images/clipboard-3636800483.png) |
