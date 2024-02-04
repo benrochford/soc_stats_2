@@ -1,0 +1,156 @@
+---
+title: "HW4"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+imports
+
+```{r}
+library(tidyverse)
+theme_set(theme_light(base_family = "Optima"))
+```
+
+## 4.1
+
+```{r}
+N <- 1e4
+
+d <- tibble(
+  x = rnorm(N, 0, 1),
+  y = rnorm(N, 0, 1)
+)
+```
+
+Create an association between x and y via some form of collider bias, 4 ways
+
+LMs for plot 1, 2, 3, 4
+
+```{r}
+d_filtered <- d |> filter(!(x < 0 & y < 0))
+lm(y ~ x, data = d_filtered)
+
+d_filtered_2 <- d |> filter(y > -x)
+lm(y ~ x, data = d_filtered_2)
+
+d_filtered_3 <- d |> filter((y > -x - 1.5) & (y < -x + 1.5))
+lm(y ~ x, data = d_filtered_3)
+
+d_z_4 <- d |> mutate(z = rbinom(N, 1, (exp(x+y)/(1+exp(x+y)))))
+lm(y ~ x + z, data = d_z_4)
+```
+
+## 4.2
+
+a.  Conditional average treatment effect
+
+    > The average treatment effect, calculated only from the a group matching certain control variables
+
+b.  Average treatment on the treated
+
+    > The average treatment effect, calculated only from the treatment group. Imagine taking away the treatment from those who were treated and measuring the change.
+
+c.  Average treatment on the untreated
+
+    > The average treatment effect, calculated only from the *un*treated group. Imagine giving the treatment to those who were not treated and measuring the change.
+
+## 4.3
+
+Provide an example of a treatment effect that you would expect to be highly heterogeneous, and explain why you think it is likely to be heterogeneous.
+
+:   An advanced math class would be a very heterogeneous treatment. People who have taken the appropriate classes to prepare for the advanced class, and who did well in those, would learn a lot and succeed in the class, but people who did not have the proper prep probably would not learn much or do well in the class. Same treatment, different outcomes.
+
+## 4.4
+
+| Case | Age |   Gender   | Effect |
+|:----:|:---:|:----------:|:------:|
+|  A   | 15  |    Man     |   7    |
+|  B   | 40  |   Woman    |   3    |
+|  C   | 30  |   Woman    |   7    |
+|  D   | 20  | Non-binary |   8    |
+|  E   | 15  |    Man     |   7    |
+|  F   | 25  |   Woman    |   4    |
+
+a.  What is the overall average treatment effect for the population?
+
+    ```{r}
+    mean(c(7,3,7,8,7,4))
+    ```
+
+b.  What is the average treatment effect for Women?
+
+    ```{r}
+    mean(c(3,7,4))
+    ```
+
+c.  If nearly all Non-binary people get treated, and about half of all Women get treated, and we control for the differences between Women and Non-binary people, what kind of treatment effect average will we get, and what can we say about the numerical estimate we’ll get?
+
+    ```{r}
+    v_W <- 0.5*0.5
+    v_NB <- 0*1
+
+    (8*v_NB + 4.667*v_W) / (v_W + v_NB)
+    ```
+
+    > We have to compute a variance-weighted average treatment effect here. Since the variance for NB is basically zero, the overall effect ends up being basically the effect among women.
+
+d.  If we assume that, in the absence of treatment, everyone would have had the same outcome, and also only teenagers (19 or younger) ever receive treatment, and we compare treated people to control people, what kind of treatment effect average will we get, and what can we say about the numerical estimate we’ll get?
+
+    ```{r}
+    ((7+7)/2) - ((3+7+8+4)/4)
+    ```
+
+    > This is a conditional average treatment effect, with the condition for treatment being whether the participant is a teenager. However, our sample only has males who are teens, so we might be missing heterogeneity that would exist in a more diverse sample.
+
+## 4.5
+
+Give an example where the average treatment effect on the treated would be more useful to consider than the overall average treatment effect, and explain why.
+
+:   The example given in the book is a drug meant to reduce risk of cervical cancer. In this case, there is a large element of the population without a cervix, so the overall average treatment effect would be pulled down by these cases because obviously the drug would have no effect on them. In this case, the treatment effect on the treatment group of people for whom the drug might actually be helpful is more important than the overall average treatment effect.
+
+## 4.6
+
+Which of the following describes the average treatment effect of assigning treatment, whether or not treatment is actually received?
+
+a.  Local average treatment effect
+
+b.  Average treatment on the treated
+
+c.  <div>
+
+    > **Intent-to-treat**
+
+    </div>
+
+d.  Variance-weighted average treatment effect
+
+## **4.7**
+
+Suppose you are conducting an experiment to see whether pricing cookies at \$1.99 versus \$2 affects the decision to purchase the cookies. The population of interest is all adults in the United States. You recruit people from your university to participate and randomize them to either see cookies priced as \$1.99 or \$2, then write down whether they purchased cookies. What kind of average treatment effect can you identify from this experiment?
+
+:   Conditional average treatment effect
+
+## **4.8**
+
+For each of the following identification strategies, what kind of treatment effect(s) is most likely to be identified?
+
+a.  A randomized experiment using a representative sample
+
+    > Average treatment effect
+
+b.  True randomization within only a certain demographic group
+
+    > Conditional average treatment effect
+
+c.  Closing back door paths connected to variation in treatment
+
+    > Variation-weighted treatment effect
+
+d.  Isolating the part of the variation in treatment variable that is driven by an exogenous variable
+
+    > Local average treatment effect
+
+e.  The control group is comparable to the treatment group, but treatment effects may be different across these groups
+
+    > Heterogeneous treatment effect
