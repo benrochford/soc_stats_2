@@ -1,0 +1,97 @@
+---
+title: "HW6"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+## HW6
+
+Setup
+
+```{r}
+library(tidyverse)
+library(broom)
+
+theme_set(theme_linedraw(base_family = "Avenir Next Condensed"))
+```
+
+## 6.2 Balance and Overlap
+
+### 6.2.1
+
+```{r}
+d <- haven::read_dta("cattaneo2.dta")
+
+d <- d |>  
+  haven::zap_labels() |>             
+  select(bweight, lbweight, mbsmoke, mmarried, mage, medu, fbaby, alcohol, mrace, nprenatal)
+
+glimpse(d)
+```
+
+Finding difference in means of covariates for mbsmoke
+
+```{r}
+standard_diff_smoke_to_cov <- function(cov) {
+  return(
+    (mean(d[[cov]][d$mbsmoke == 1]) - mean(d[[cov]][d$mbsmoke == 0])) / sd(d[[cov]][d$mbsmoke == 1])
+  )
+}
+
+
+cols_cov <- colnames(d)[colnames(d) != "mbsmoke"]
+d_cov <- tibble(cov = cols_cov,
+                diff = sapply(cols_cov, standard_diff_smoke_to_cov)) |> arrange(desc(abs(diff)))
+
+d_cov
+```
+
+```{r}
+ggplot(data = d_cov, mapping = aes(x = diff, y = reorder(cov, abs(diff)))) + 
+  geom_segment(xend = 0, yend = d_cov$cov) + 
+  geom_point() +
+  geom_vline(xintercept = 0, linetype = "dashed")
+```
+
+The worst offenders, in terms of bias as potential confounders, are those towards the top of the chart and table.
+
+## 6.3 Matching
+
+### 6.3.1
+
+You want to know whether practicing cursive improves your penmanship (on a 1-10 scale). You find that, among people who don’t practice cursive, average penmanship is 5, 10 people are left-handed, 2 are ambidextrous, and 88 are right-handed. Among people who do practice cursive, 6 are left-handed with average penmanship 7, 4 are ambidextrous with average penmanship 4, and 90 are right-handed with average penmanship 6.
+
+a.  You want to create a set of weights that will *make the treated group match the control group on handedness*. Follow the process in [section 14.2](https://theeffectbook.net/ch-Matching.html#weighted-averages), paying attention to *why* certain numbers are going in certain positions. What weights will be given to the left, ambidextrous, and right-handed people *in the control group*?
+
+    > In the control group, all will be weighted with 1.
+
+b.  What weights will be given to the left, ambidextrous, and right-handed people *in the treated group*?
+
+    ```{r}
+    10 / 6  # 10 in untreated, 6 in treated
+    2 / 4   # 2 in untreated, 4 in treated
+    88 / 90 # 88 in untreated, 90 in treated
+    ```
+
+    > 1.667 for left, .5 for ambidextrous, 0.978 for right
+
+c.  Use the weights from part b to calculate the *proportion of left-handed people in the treated group*, as well as the proportion of ambidextrous people and the proportion of right-handed people. If you don’t get 10%, 2%, and 88% (or very close with some rounding error), your weights are wrong, try again.
+
+    ```{r}
+    1.667 * (6/100)
+    0.5 * (4/100)
+    0.978 * (90/100)
+    ```
+
+d.  What is the weighted average penmanship score in the treated group?
+
+    ```{r}
+    ( (1.667*6*7) + (0.5*4*4) + (0.978*90*6) ) / 100
+    ```
+
+e.  What is the effect of practicing cursive that we would estimate using this data?
+
+    ```{r}
+    6.06134 - 5
+    ```
