@@ -1,0 +1,224 @@
+---
+title: "HW7"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+# Homework 7
+
+Setup
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(broom)
+library(cobalt)
+library(MatchIt)
+library(WeightIt)
+
+load("exercise_data.Rdata")
+
+# Helpers
+love_plot <- function(x) {
+  cobalt::love.plot(x, 
+    binary = "std" ,
+    stats = c("m", "ks") ,
+    thresholds = c(.1, .05),
+    var.order = "adjusted",
+    abs = TRUE
+  )
+}
+```
+
+-   add a factor version of the treatment to the data frame for easy plotting
+
+-   create formula objects that contain the propensity score (or matching) models with and without quadratic terms
+
+    ```{r}
+    d <- d |> 
+      mutate(treat_f = if_else(treat == 1, "Treatment", "Control"))
+    d_exper <- d_exper |> 
+      mutate(treat_f = if_else(treat == 1, "Treatment", "Control"))
+
+    form_match <- "re78 ~ treat + married + nodegr + black + hisp + age + educ + re74 + re75 + u74 + u75"
+    form_match_quad <- "re78 ~ treat + married + nodegr + black + hisp + age + I(age^2) + educ + I(educ^2) + re74 + I(re74^2) + re75 + I(re75^2) + u74 + u75"
+
+    form_treat_all <- "treat ~ married + nodegr + black + hisp + 
+                               age + I(age^2) + educ + I(educ^2) + re74 + 
+                               I(re74^2) + re75 + I(re75^2) + u74 + u75"
+    ```
+
+For each exercise *after the first four*, your basic workflow will be:
+
+1.  Match or weight, as directed
+
+2.  Check balance (overall, if applicable and by covariate) using graphical and numeric means
+
+3.  Estimate the ATT
+
+### **7.1.1**
+
+Use the experimental data to estimate the effect of the job training treatment. How much does it appear to affect 1978 income?
+
+```{r}
+mean(d_exper$re78[d_exper$treat == 1]) - mean(d_exper$re78[d_exper$treat == 0])
+```
+
+> By raw comparisons of the treatment and control means, It appears to affect 1978 income by \~\$886.30
+
+Now look at the **observational data (for all exercises from now on**). How large is the raw difference in 1978 income between the treatment group and the PSID comparison group?
+
+```{r}
+mean(d$re78[d$treat == 1]) - mean(d$re78[d$treat == 0])
+```
+
+> In terms of the raw difference, the treatment group's 1978 mean income was \$16541 *lower* than the comparison group's.
+
+### **7.1.2**
+
+Try to estimate the effect of the treatment using regression. What does regression say the effect of the program is?
+
+```{r}
+super_naive_TE <- lm(re78 ~ treat, d)
+
+naive_TE_obs <- lm(form_match, d)  # no quad terms
+naive_TE_obs_quad <- lm(form_match_quad, d)  # with quad terms
+
+tidy(super_naive_TE, conf.int = TRUE)
+tidy(naive_TE_obs, conf.int = TRUE)
+tidy(naive_TE_obs_quad, conf.int = TRUE)
+```
+
+> Regression says the effect of the program on 1978 income is a \~\$2462.38 decrease with no quadratic terms in the formula, and a \$1949.14 decrease with quadratic terms included in the formula.
+
+### **7.1.3**
+
+Begin by exact matching on all the dummy variables. How many treated cases cannot be matched?
+
+```{r}
+exact_match <- matchit(treat ~ married + nodegr + black + hisp + 
+          age + educ + re74 + re75 + u74 + u75, 
+        data = d, method = "exact", estimand = "ATT")
+
+summary(exact_match)[[2]]
+```
+
+> When matching over treatment on all available variables, 2208 samples from control could not be matched, and 288 samples from treatment could not be matched.
+
+What is the (FS)ATT estimate?
+
+```{r}
+exact_match_d <- match.data(exact_match)
+
+mean(exact_match_d$re78[exact_match_d$treat == 1]) - mean(exact_match_d$re78[exact_match_d$treat == 0])
+```
+
+> The (feasible sample) average treatment effect among the treated, based on the exact match group, is a \~\$3740.54 increase in 1978 income.
+
+### **7.1.4**
+
+Use the observational data to estimate each case’s propensity to receive treatment using `glm()`. Use a logistic regression with quadratic terms for age, education, 1974 income, and 1975 income. Spend a few moments thinking about what this model says.
+
+```{r}
+prop_obs <- glm(form_treat_all, 
+                data = d, family = "binomial")
+
+summary(prop_obs)
+```
+
+Look at the density plots of the p-score for treated and untreated groups.
+
+```{r}
+d <- d |> 
+  mutate(p_score = predict(prop_obs, data = d, type = "response"))
+
+d |> ggplot(aes(x = p_score)) +
+  geom_density() + 
+  facet_wrap(~treat) +
+  theme_minimal()
+```
+
+### **7.1.5**
+
+Estimate propensity scores and ATT weights using `weightit()`. Ignore the warning you get. We’ll discuss that more in class. Estimate the ATT. Check for covariate balance.
+
+```{r}
+prop_weights <- weightit(as.formula(form_treat_all), 
+                         data = d, method = "ps", estimand = "ATT")
+
+summary(prop_weights)
+```
+
+```{r}
+love_plot(prop_weights)
+
+prop_w_m <- lm(re78 ~ treat, data = d, weights = prop_weights$weights)
+
+summary(prop_w_m)
+```
+
+> With weighting, ATT is a \~\$1139.30 increase in 1978 income.
+>
+> Based on Love plot, covariates are partially balanced after weighting.
+
+### **7.1.6**
+
+Now do the same as above using “entropy balancing.”
+
+```{r}
+entropy_bal <- weightit(as.formula(form_treat_all),
+                        data = d, method = "ebal", estimand = "ATT")
+summary(entropy_bal)
+```
+
+Confirm that you’ve achieved balance on the means and the variances of the covariates. Estimate the ATT.
+
+```{r}
+love_plot(entropy_bal)
+
+entropy_lm <- lm(re78 ~ treat, data = d, weights = entropy_bal$weights)
+
+summary(entropy_lm)
+```
+
+> Mostly balanced on means and variances of covariates, better than before.
+>
+> Our ATT estimate is an increase of \~\$339.50 in 1978 income.
+
+### **7.1.7 Bonus**
+
+Implement a bootstrap of your preferred estimate.
+
+```{r}
+boot <- function(d_here) {
+  s_d <- d_here[sample(nrow(d_here), replace = TRUE), ]
+  
+  psmatch <- suppressWarnings(weightit(as.formula(form_treat_all), 
+               data = s_d, method = "ps", estimand = "ATT"))
+  
+  treated_re78 <- s_d$re78[s_d$treat == 1]
+  treated_weights <- psmatch$weights[s_d$treat == 1]
+  untreated_re78 <- s_d$re78[s_d$treat == 0]
+  untreated_weights <- psmatch$weights[s_d$treat == 0]
+  
+  weighted_mean_treated <- 
+    weighted.mean(treated_re78, w = treated_weights)
+  weighted_mean_untreated <- 
+    weighted.mean(untreated_re78, w = untreated_weights)
+
+  return(weighted_mean_treated - weighted_mean_untreated)
+}
+
+n_sims <- 1000
+sim_estimates <- replicate(n_sims, boot(d))
+
+sim_df <- data.frame(idx = 1:n_sims, est = sim_estimates)
+```
+
+What is the bootstrapped standard error?
+
+```{r}
+mean(sim_df$est)
+sd(sim_df$est)
+```
