@@ -1,0 +1,139 @@
+---
+title: "HW8"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+# HW8
+
+Setup:
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(WeightIt)
+library(cobalt)
+```
+
+```{r}
+dict_url <- "https://raw.githubusercontent.com/avehtari/ROS-Examples/master/Childcare/data/datadict.txt"
+
+read_file(dict_url) |> 
+  writeLines()
+
+var_names <- c("momage", "b.marr", "momed", "work.dur", "prenatal", "cig", "booze", "sex", "first", "bw", "bwg", "preterm", "black", "hispanic", "white", "lths", "hs", "ltcoll", "college", "dayskidh", "st5", "st9", "st12", "st25", "st36", "st42", "st48", "st53", "st99", "income", "treat", "ppvtr.36")
+
+url <- "https://raw.githubusercontent.com/avehtari/ROS-Examples/master/Childcare/data/cc2.csv"
+
+d <- read_csv(url) |> 
+  select(all_of(var_names)) |> 
+  mutate(across(matches("st\\d{2}"), as.integer))
+
+glimpse(d)
+```
+
+This is data about an intervention for babies with low birth weight in the 80s. Outcome is `ppvtr.36`, a score on a test taken at age 3.
+
+### 8.1.1
+
+*"We excluded the most severely low-birth-weight children (those at or below 1500 grams) from the sample because they are so different from the comparison sample."*
+
+> They excluded these children from the sample, likely because they represent outlier conditions in which interventions tested for other babies with low birth rate would not have been impactful.
+>
+> Would I have excluded them? Hmm. I don't know. I may have been inclined to exclude children with particular conditions, and be clear about why the interventions we were testing were not relevant to that population. Making a cutoff at a certain weight seems rather arbitrary, by itself, and is a bit concerning to me, even if there is a justification.
+
+### 8.1.2
+
+Which variables are you planning to use for covariate balancing? Justify your answer, but *keep it short!*
+
+> Sheesh, prompting us like ChatGPT:
+>
+> "momage"\
+> mom age at time of birth
+>
+> "prenatal" indicator for whether mom received prenatal care
+>
+> "cig"\
+> indicator for whether mom smoked cigarettes while pregnant
+>
+> "booze"\
+> indicator for whether mom drank alcohol while pregnant
+>
+> "sex"\
+> indicator for whether child was born male or female
+>
+> "bw"\
+> child’s birth weight
+>
+> "preterm" number of weeks preterm child was born
+>
+> "income"\
+> family income one year after the child was born
+>
+> I tried to select the minimum set of variables that I thought would potentially impact how a child ends up doing on a cognitive test at age 3. In terms of "contextual" information, I felt that the mother's age and the income level of the family would probably capture a lot, but including the prenatal care and specific substance usage information seemed pretty important too. In terms of things we would want to balance for the kids themselves, I thought sex, whether birth weight was low, and weeks born preterm would be important. It's possible that geographic info, race, or other variables will help to capture more socioeconomic information that is important for the outcome too, but I didn't include those here.
+
+### 8.1.3
+
+Balancing covariates using WeightIt
+
+**Propensity**
+
+```{r}
+# form_w <- as.formula("treat ~ momage + I(momage^2) + momed + I(momed^2) + b.marr + booze + cig + black + hispanic + white + prenatal + sex + bwg + preterm + I(preterm^2) + income + st99")  Too many parameters for entropy! (apparently)
+
+form_w <- as.formula("treat ~ momage + momed + I(momed^2) + black + hispanic + white + bwg + income + I(income^2)")
+
+
+propensity <- weightit(form_w, method = "ps", estimand = "ATT", data = d)
+
+summary(propensity)
+love.plot(propensity, binary = "std", 
+          stats = c("m","ks"), thresholds = c(.1))
+bal.plot(propensity, which = "both")
+```
+
+**CBPS**
+
+```{r}
+cbps <- weightit(form_w, method = "cbps", estimand = "ATT", data = d)
+
+summary(cbps)
+love.plot(cbps, binary = "std", 
+          stats = c("m","ks"), thresholds = c(.1))
+bal.plot(cbps, which = "both")
+```
+
+**Entropy Balancing**
+
+```{r}
+entropy <- weightit(form_w, method = "ebal", estimand = "ATT", 
+                    moments = 3, data = d)
+
+summary(entropy)
+love.plot(entropy, binary = "std", 
+          stats = c("m","ks"), thresholds = c(.1))
+bal.plot(entropy, which = "both")
+```
+
+> I had to adjust the variables I was using quite a bit in order for entropy to converge. \
+> \
+> I still wanted to capture as much about the given mother / family's socioeconomic circumstances as feasible, because I would reason that this would impact cognitive outcomes for several reasons (diet, childcare, quality stimulus time or something, etc. I'm not a developmental psychologist). So I ended up going for variables that were more contextual, (race, income, mother age and education), other than the binary flag for whether the baby was underweight, which seemed to be especially important for making a defensible comparison with the treated group.\
+> \
+> It seems that with this adjusted set of covariates, the entropy-based weighting is performing the best.
+
+Running the weighted models:
+
+```{r}
+summary(lm(ppvtr.36 ~ treat, data = d, weights = propensity$weights))
+summary(lm(ppvtr.36 ~ treat, data = d, weights = cbps$weights))
+summary(lm(ppvtr.36 ~ treat, data = d, weights = entropy$weights))
+```
+
+> We see that the estimated effect of treatment, using the ebal weights, is an \~8.648 point increase in the 3 year old test score, for a baby receiving the intervention.
+
+```{r}
+summary(lm(ppvtr.36 ~ treat, data = d))
+```
+
+> The naive estimate is 6.085, for comparison.

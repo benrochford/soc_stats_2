@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ben Rochford">
+
+<title>HW8</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="HW8_files/libs/clipboard/clipboard.min.js"></script>
+<script src="HW8_files/libs/quarto-html/quarto.js"></script>
+<script src="HW8_files/libs/quarto-html/popper.min.js"></script>
+<script src="HW8_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="HW8_files/libs/quarto-html/anchor.min.js"></script>
+<link href="HW8_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="HW8_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="HW8_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="HW8_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="HW8_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">HW8</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ben Rochford </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="hw8" class="level1">
+<h1>HW8</h1>
+<p>Setup:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(WeightIt)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cobalt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> cobalt (Version 4.5.3, Build Date: 2024-01-09)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dict_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/avehtari/ROS-Examples/master/Childcare/data/datadict.txt"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_file</span>(dict_url) <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">writeLines</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data Dictionary for Child Care example
+
+The IHDP intervention was implemented in the 1980’s and targeted low
+birth weight (less than 2500 grams), pre-term children.  They were
+recruited at the time of birth.  It provided high quality child care
+and other services in their first 3 years of life.  The comparison
+group was pulled from a survey conducted during the same time period
+called the National Survey of Longitudinal Youth.  At the time of the
+intervention many of the original survey participants (first recruited
+in 1979) had children. We have data from those children and their
+mothers for an overlapping set of variables (below) as the IHDP
+children.
+
+The intervention for low-birth-weight children is described by
+- Brooks-Gunn, J., Liaw, F. R., and Klebanov, P. K. (1992). Effects of
+  early intervention on cognitive function of low birth weight preterm
+  infants. Journal of Pediatrics 120, 350–359.
+- Hill, J. L., Brooks-Gunn, J., and Waldfogel, J. (2003). Sustained
+  effects of high participation in an early intervention for
+  low-birth-weight premature infants. Developmental Psychology 39,
+  730–744.
+
+Data columns
+
+"momage"   
+mom age at time of birth
+
+"b.marr"   
+indicator for whether mom was married at birth
+
+"momed"    
+mother’s education level at the time she gave birth
+
+"work.dur" 
+indicator for whether mom worked in the year before she gave birth
+
+"prenatal" 
+indicator for whether mom received prenatal care
+
+"cig"     
+ indicator for whether mom smoked cigarettes while pregnant
+
+"booze"    
+indicator for whether mom drank alcohol while pregnant
+
+"sex"      
+indicator for whether child was born male or female
+
+"first"    
+indicator for whether child was the first born for the mother
+
+"bw"       
+child’s birth weight
+
+"bwg"      
+indicator for whether child was born low birth weight
+
+"preterm" 
+number of weeks preterm child was born
+
+"black", "hispanic", "white"    
+indicators for child’s race/ethnicity
+
+"lths", "hs", "ltcoll", "college"  
+indicators for mother’s education at time of birth
+
+"dayskidh" 
+number of days child was in the hospital after being born
+
+"st5", "st9", "st12", "st25", "st36", "st42", "st48", "st53"    
+indicator for state where household resides 
+
+"st99"  
+indicator for whether family  was living in state served by the ihdp
+
+"income"   
+family income one year after the child was born
+
+"treat"   
+indicator for whether family was allowed to receive IHDP services (1 = yes) 
+
+"ppvtr.36"
+IQ measured at age 36 months</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>var_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"momage"</span>, <span class="st">"b.marr"</span>, <span class="st">"momed"</span>, <span class="st">"work.dur"</span>, <span class="st">"prenatal"</span>, <span class="st">"cig"</span>, <span class="st">"booze"</span>, <span class="st">"sex"</span>, <span class="st">"first"</span>, <span class="st">"bw"</span>, <span class="st">"bwg"</span>, <span class="st">"preterm"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"white"</span>, <span class="st">"lths"</span>, <span class="st">"hs"</span>, <span class="st">"ltcoll"</span>, <span class="st">"college"</span>, <span class="st">"dayskidh"</span>, <span class="st">"st5"</span>, <span class="st">"st9"</span>, <span class="st">"st12"</span>, <span class="st">"st25"</span>, <span class="st">"st36"</span>, <span class="st">"st42"</span>, <span class="st">"st48"</span>, <span class="st">"st53"</span>, <span class="st">"st99"</span>, <span class="st">"income"</span>, <span class="st">"treat"</span>, <span class="st">"ppvtr.36"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/avehtari/ROS-Examples/master/Childcare/data/cc2.csv"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url) <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(var_names)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">matches</span>(<span class="st">"st</span><span class="sc">\\</span><span class="st">d{2}"</span>), as.integer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 4381 Columns: 64
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): sample
+dbl (62): momage, momrace, b.marr, momed, work.dur, prenatal, cig, booze, se...
+lgl  (1): st99
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 4,381
+Columns: 32
+$ momage   &lt;dbl&gt; 33, 22, 13, 25, 19, 19, 26, 20, 23, 28, 32, 23, 29, 18, 25, 1…
+$ b.marr   &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1…
+$ momed    &lt;dbl&gt; 4, 1, 1, 4, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 4, 1, 1, 1, 2, 1, 3…
+$ work.dur &lt;dbl&gt; 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1…
+$ prenatal &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ cig      &lt;dbl&gt; 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1…
+$ booze    &lt;dbl&gt; 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ sex      &lt;dbl&gt; 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1…
+$ first    &lt;dbl&gt; 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1…
+$ bw       &lt;dbl&gt; 1559, 2240, 1900, 1550, 2270, 1550, 2330, 2410, 1776, 2140, 2…
+$ bwg      &lt;dbl&gt; 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0…
+$ preterm  &lt;dbl&gt; 10, 3, 6, 8, 5, 4, 9, 3, 6, 5, 5, 7, 6, 10, 8, 6, 7, 6, 6, 6,…
+$ black    &lt;dbl&gt; 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0…
+$ hispanic &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ white    &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1…
+$ lths     &lt;dbl&gt; 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0…
+$ hs       &lt;dbl&gt; 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0…
+$ ltcoll   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
+$ college  &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0…
+$ dayskidh &lt;dbl&gt; 31, 4, 9, 50, 4, 13, 8, 6, 30, 2, 3, 27, 13, 24, 71, 1, 6, 4,…
+$ st5      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ st9      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st12     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st25     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st36     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st42     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st48     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st53     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ st99     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ income   &lt;dbl&gt; 42500.0000, 5000.0000, 12500.0000, 42500.0000, 5000.0000, 125…
+$ treat    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ ppvtr.36 &lt;dbl&gt; 111.00000, 81.00000, 92.00000, 103.00000, 81.00000, 94.00000,…</code></pre>
+</div>
+</div>
+<p>This is data about an intervention for babies with low birth weight in the 80s. Outcome is <code>ppvtr.36</code>, a score on a test taken at age 3.</p>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section">8.1.1</h3>
+<p><em>“We excluded the most severely low-birth-weight children (those at or below 1500 grams) from the sample because they are so different from the comparison sample.”</em></p>
+<blockquote class="blockquote">
+<p>They excluded these children from the sample, likely because they represent outlier conditions in which interventions tested for other babies with low birth rate would not have been impactful.</p>
+<p>Would I have excluded them? Hmm. I don’t know. I may have been inclined to exclude children with particular conditions, and be clear about why the interventions we were testing were not relevant to that population. Making a cutoff at a certain weight seems rather arbitrary, by itself, and is a bit concerning to me, even if there is a justification.</p>
+</blockquote>
+</section>
+<section id="section-1" class="level3">
+<h3 class="anchored" data-anchor-id="section-1">8.1.2</h3>
+<p>Which variables are you planning to use for covariate balancing? Justify your answer, but <em>keep it short!</em></p>
+<blockquote class="blockquote">
+<p>Sheesh, prompting us like ChatGPT:</p>
+<p>“momage”<br>
+mom age at time of birth</p>
+<p>“prenatal” indicator for whether mom received prenatal care</p>
+<p>“cig”<br>
+indicator for whether mom smoked cigarettes while pregnant</p>
+<p>“booze”<br>
+indicator for whether mom drank alcohol while pregnant</p>
+<p>“sex”<br>
+indicator for whether child was born male or female</p>
+<p>“bw”<br>
+child’s birth weight</p>
+<p>“preterm” number of weeks preterm child was born</p>
+<p>“income”<br>
+family income one year after the child was born</p>
+<p>I tried to select the minimum set of variables that I thought would potentially impact how a child ends up doing on a cognitive test at age 3. In terms of “contextual” information, I felt that the mother’s age and the income level of the family would probably capture a lot, but including the prenatal care and specific substance usage information seemed pretty important too. In terms of things we would want to balance for the kids themselves, I thought sex, whether birth weight was low, and weeks born preterm would be important. It’s possible that geographic info, race, or other variables will help to capture more socioeconomic information that is important for the outcome too, but I didn’t include those here.</p>
+</blockquote>
+</section>
+<section id="section-2" class="level3">
+<h3 class="anchored" data-anchor-id="section-2">8.1.3</h3>
+<p>Balancing covariates using WeightIt</p>
+<p><strong>Propensity</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># form_w &lt;- as.formula("treat ~ momage + I(momage^2) + momed + I(momed^2) + b.marr + booze + cig + black + hispanic + white + prenatal + sex + bwg + preterm + I(preterm^2) + income + st99")  Too many parameters for entropy! (apparently)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>form_w <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"treat ~ momage + momed + I(momed^2) + black + hispanic + white + bwg + income + I(income^2)"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>propensity <span class="ot">&lt;-</span> <span class="fu">weightit</span>(form_w, <span class="at">method =</span> <span class="st">"ps"</span>, <span class="at">estimand =</span> <span class="st">"ATT"</span>, <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some extreme weights were generated. Examine them with `summary()` and
+maybe trim them with `trim()`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(propensity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Summary of weights
+
+- Weight ranges:
+
+        Min                                  Max
+treated   1    ||                         1.0000
+control   0 |---------------------------| 8.6837
+
+- Units with the 5 most extreme weights by group:
+                                           
+              6      5      4      3      2
+ treated      1      1      1      1      1
+            813   2576   2577   2831   2772
+ control 5.0292 5.7296 6.3381 6.4995 8.6837
+
+- Weight statistics:
+
+        Coef of Var   MAD Entropy # Zeros
+treated       0.000 0.000  -0.000       0
+control       4.951 1.074   1.681      24
+
+- Effective Sample Sizes:
+
+           Control Treated
+Unweighted 4091.       290
+Weighted    160.38     290</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(propensity, <span class="at">binary =</span> <span class="st">"std"</span>, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"ks"</span>), <span class="at">thresholds =</span> <span class="fu">c</span>(.<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.plot</span>(propensity, <span class="at">which =</span> <span class="st">"both"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No `var.name` was provided. Displaying balance for prop.score.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>CBPS</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cbps <span class="ot">&lt;-</span> <span class="fu">weightit</span>(form_w, <span class="at">method =</span> <span class="st">"cbps"</span>, <span class="at">estimand =</span> <span class="st">"ATT"</span>, <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some extreme weights were generated. Examine them with `summary()` and
+maybe trim them with `trim()`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cbps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Summary of weights
+
+- Weight ranges:
+
+        Min                                  Max
+treated   1      ||                       1.0000
+control   0 |---------------------------| 6.3668
+
+- Units with the 5 most extreme weights by group:
+                                        
+             5     4     3      2      1
+ treated     1     1     1      1      1
+          2576  2831  2577   1129   2772
+ control 4.519 5.309 5.361 5.6286 6.3668
+
+- Weight statistics:
+
+        Coef of Var   MAD Entropy # Zeros
+treated       0.000 0.000   -0.00       0
+control       4.524 1.037    1.57       0
+
+- Effective Sample Sizes:
+
+           Control Treated
+Unweighted 4091.       290
+Weighted    190.59     290</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(cbps, <span class="at">binary =</span> <span class="st">"std"</span>, </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"ks"</span>), <span class="at">thresholds =</span> <span class="fu">c</span>(.<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.plot</span>(cbps, <span class="at">which =</span> <span class="st">"both"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No `var.name` was provided. Displaying balance for prop.score.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Entropy Balancing</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>entropy <span class="ot">&lt;-</span> <span class="fu">weightit</span>(form_w, <span class="at">method =</span> <span class="st">"ebal"</span>, <span class="at">estimand =</span> <span class="st">"ATT"</span>, </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">moments =</span> <span class="dv">3</span>, <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some extreme weights were generated. Examine them with `summary()` and
+maybe trim them with `trim()`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(entropy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Summary of weights
+
+- Weight ranges:
+
+        Min                                    Max
+treated   1 ||                              1.0000
+control   0 |---------------------------| 325.7264
+
+- Units with the 5 most extreme weights by group:
+                                                     
+                5        4        3        2        1
+ treated        1        1        1        1        1
+              969     2616     2204      811      401
+ control 204.8342 213.1212 217.4518 315.4724 325.7264
+
+- Weight statistics:
+
+        Coef of Var   MAD Entropy # Zeros
+treated       0.000 0.000   0.000       0
+control      11.922 1.721   4.028      60
+
+- Effective Sample Sizes:
+
+           Control Treated
+Unweighted 4091.       290
+Weighted     28.59     290</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">love.plot</span>(entropy, <span class="at">binary =</span> <span class="st">"std"</span>, </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"ks"</span>), <span class="at">thresholds =</span> <span class="fu">c</span>(.<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bal.plot</span>(entropy, <span class="at">which =</span> <span class="st">"both"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No `var.name` was provided. Displaying balance for momage.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>I had to adjust the variables I was using quite a bit in order for entropy to converge.<br>
+<br>
+I still wanted to capture as much about the given mother / family’s socioeconomic circumstances as feasible, because I would reason that this would impact cognitive outcomes for several reasons (diet, childcare, quality stimulus time or something, etc. I’m not a developmental psychologist). So I ended up going for variables that were more contextual, (race, income, mother age and education), other than the binary flag for whether the baby was underweight, which seemed to be especially important for making a defensible comparison with the treated group.<br>
+<br>
+It seems that with this adjusted set of covariates, the entropy-based weighting is performing the best.</p>
+</blockquote>
+<p>Running the weighted models:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(ppvtr<span class="fl">.36</span> <span class="sc">~</span> treat, <span class="at">data =</span> d, <span class="at">weights =</span> propensity<span class="sc">$</span>weights))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = ppvtr.36 ~ treat, data = d, weights = propensity$weights)
+
+Weighted Residuals:
+    Min      1Q  Median      3Q     Max 
+-83.583  -1.473   1.087   3.425  73.649 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  80.1350     0.4157  192.78   &lt;2e-16 ***
+treat        11.9788     0.5917   20.24   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.172 on 4379 degrees of freedom
+Multiple R-squared:  0.08558,   Adjusted R-squared:  0.08537 
+F-statistic: 409.8 on 1 and 4379 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(ppvtr<span class="fl">.36</span> <span class="sc">~</span> treat, <span class="at">data =</span> d, <span class="at">weights =</span> cbps<span class="sc">$</span>weights))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = ppvtr.36 ~ treat, data = d, weights = cbps$weights)
+
+Weighted Residuals:
+    Min      1Q  Median      3Q     Max 
+-75.246  -1.758   0.825   3.187  83.260 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  82.0256     0.4211  194.80   &lt;2e-16 ***
+treat        10.0882     0.5940   16.98   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.134 on 4379 degrees of freedom
+Multiple R-squared:  0.06181,   Adjusted R-squared:  0.06159 
+F-statistic: 288.5 on 1 and 4379 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(ppvtr<span class="fl">.36</span> <span class="sc">~</span> treat, <span class="at">data =</span> d, <span class="at">weights =</span> entropy<span class="sc">$</span>weights))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = ppvtr.36 ~ treat, data = d, weights = entropy$weights)
+
+Weighted Residuals:
+    Min      1Q  Median      3Q     Max 
+-595.66   -1.37    0.24    1.83  517.27 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   83.465      0.363 229.923  &lt; 2e-16 ***
+treat          8.648      1.411   6.129 9.59e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 23.22 on 4379 degrees of freedom
+Multiple R-squared:  0.008507,  Adjusted R-squared:  0.00828 
+F-statistic: 37.57 on 1 and 4379 DF,  p-value: 9.592e-10</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We see that the estimated effect of treatment, using the ebal weights, is an ~8.648 point increase in the 3 year old test score, for a baby receiving the intervention.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(ppvtr<span class="fl">.36</span> <span class="sc">~</span> treat, <span class="at">data =</span> d))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = ppvtr.36 ~ treat, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-59.114 -13.114   1.047  14.497  42.972 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  86.0280     0.3137 274.220  &lt; 2e-16 ***
+treat         6.0857     1.2194   4.991 6.24e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 20.07 on 4379 degrees of freedom
+Multiple R-squared:  0.005656,  Adjusted R-squared:  0.005429 
+F-statistic: 24.91 on 1 and 4379 DF,  p-value: 6.241e-07</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>The naive estimate is 6.085, for comparison.</p>
+</blockquote>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
