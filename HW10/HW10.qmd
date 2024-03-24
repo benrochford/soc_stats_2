@@ -1,0 +1,159 @@
+---
+title: "HW10"
+author: "Ben Rochford"
+format: html
+editor: visual
+---
+
+# HW10
+
+Setup
+
+```{r}
+library(tidyverse)
+library(panelr)
+library(gapminder)
+library(ggeffects)
+```
+
+### 10.1 - Reshaping data
+
+```{r}
+gap_wide <- gapminder::gapminder |> 
+  select(continent, country, year, lifeExp, gdpPercap, pop) |> 
+  pivot_wider(
+    names_from = year, 
+    values_from = c(lifeExp, gdpPercap, pop), 
+    names_sep = ""
+  )
+
+gap_wide
+```
+
+Use the `panelr` package to turn the dataset back to its original long form and save it as `gap_long`
+
+```{r}
+gap_long <- long_panel(gap_wide, periods = 
+                         seq(1952, 2007, by = 5)) |> 
+  select(wave, continent, country, lifeExp, gdpPercap, pop)
+
+gap_long
+```
+
+Use the `panelr` package to turn the `gap_long` into `gap_wide`, replicating `pivot_wider()`
+
+```{r}
+gap_wide <- widen_panel(gap_long)
+gap_wide
+```
+
+### 10.2 - `lifeExp` visualization
+
+```{r}
+r10_countries <- gap_wide |> 
+  sample_n(10) |> 
+  long_panel(prefix = "_", periods = seq(1952, 2007, by = 5))
+
+lifeYear <- ggplot(r10_countries, aes(x = wave, y = lifeExp, color = country)) +
+  geom_line() + theme_light()
+
+lifeYear
+```
+
+### 10.3 - Intra-class Correlation
+
+What is the ICC for `lifeExp`, `pop`, and `gdpPercap` in the `gapminder` dataset?
+
+```{r}
+m_lifeExp <- lmer(lifeExp ~ (1 | country), data = gapminder, REML = FALSE)
+summary(m_lifeExp)
+```
+
+`lifeExp`:
+
+```{r}
+119.40 / (119.40 + 47.36)
+```
+
+```{r}
+m_pop <- lmer(pop ~ (1 | country), data = gapminder, REML = FALSE)
+summary(m_pop)
+```
+
+`pop`:
+
+```{r}
+1.021e+16 / (1.021e+16  + 1.055e+15)
+```
+
+```{r}
+m_gdpPercap <- lmer(gdpPercap ~ (1 | country), data = gapminder, REML = FALSE)
+summary(m_gdpPercap)
+```
+
+`gdpPercap`:
+
+```{r}
+69177620 / (69177620 + 27934767)
+```
+
+### 10.4 - `WageData` `lmer`s
+
+```{r}
+data("WageData", package = "panelr")
+
+WageData <- WageData |> 
+  mutate(
+    college = if_else(ed >= 16, 1L, 0L),  # college variable
+    t0 = t - 1                             # start time at 0
+  )
+```
+
+Log wage as a function of college and linear time
+
+```{r}
+lw_col_time = lmer(lwage ~ college + t + (1 | id), 
+                   data = WageData, REML = FALSE)
+summary(lw_col_time)
+```
+
+... plus a random slope on time
+
+```{r}
+lw_rt = lmer(lwage ~ college + t + (1 + t | id), 
+             data = WageData, REML = FALSE)
+summary(lw_rt)
+```
+
+... now with time as a quadratic
+
+```{r}
+lw_qt = lmer(lwage ~ college + t + I(t^2) + (1 + t + I(t^2) | id), 
+             data = WageData, REML = FALSE)
+summary(lw_qt)
+```
+
+**Comparing models with BIC**
+
+```{r}
+c(BIC(lw_col_time), BIC(lw_rt), BIC(lw_qt))
+```
+
+The lowest BIC score belongs to model 3 with the quadratic term - slightly beating the model with random slope on time included, where both of these models significantly beat model 1.
+
+Report the estimated effect of college on log wages given the data and model. You can get this using `tidy()`, `summary()`, or any other function you prefer.
+
+> According to model3, `college` increases log earnings by 0.312
+
+Use `ggpredict() |> plot()` (or another approach) to plot predictions for a sample of 9 individuals over time.
+
+```{r}
+wageSample <- WageData |> 
+  mutate(p = predict(lw_qt)) |> 
+  group_by(id) |> nest() |> ungroup() |> 
+  slice_sample(n = 9) |> 
+  unnest(data)
+
+ggplot(wageSample, aes(x = t0, y = p, color = factor(id))) +
+         geom_line()
+```
